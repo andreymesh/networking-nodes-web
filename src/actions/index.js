@@ -32,10 +32,12 @@ const getNetworkNodesInfo = id =>
 const deleteNetworkNodes = id =>
 	async dispatch => {
 		try {
-			fetch(`${API}/${id}`, {
+			const response = await fetch(`${API}/${id}`, {
 				method: 'DELETE'
 			})
-			dispatch(getListNetworkNodes())
+			const responseJSON = await response.json()
+			dispatch(closeSideBar())
+			responseJSON.success && dispatch(getListNetworkNodes())
 		}
 		catch (e) {
 			console.log(types.NETWORK_NODE_DELETE_FAILED, e)
@@ -48,7 +50,7 @@ const updateNetworkNode = data =>
 		const method = data.id ? 'PUT' : 'POST'
 		const body = JSON.stringify(data)
 		try {
-			await fetch(url, {
+			const response = await fetch(url, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -56,7 +58,8 @@ const updateNetworkNode = data =>
 				method,
 				body
 			})
-			dispatch(getListNetworkNodes())
+			const responseJSON = await response.json()
+			responseJSON.success && dispatch(getListNetworkNodes())
 			data.id ? dispatch(closeSideBar()) : dispatch(closeModal())
 		}
 		catch (e) {

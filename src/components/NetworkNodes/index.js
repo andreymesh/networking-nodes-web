@@ -35,16 +35,14 @@ class NetworkNodes extends React.Component {
 		const { id } = this.state
 		return (
 			<div className="parent">
-				{networkNodesList.length > 0 &&
-					<div className="content">
-						<button onClick={openModal}>Add</button>
-						<button onClick={this.deleteNode} disabled={!id}>Delete</button>
-						<Tree
-							onSelect={this.onSelect}
-							treeData={networkNodesList}
-						/>
-					</div>
-				}
+				<div className="content">
+					<button onClick={openModal}>Add</button>
+					<button onClick={this.deleteNode} disabled={!id}>Delete</button>
+					<Tree
+						onSelect={this.onSelect}
+						treeData={networkNodesList}
+					/>
+				</div>
 				{visible &&
 					<div className="sideBar">
 						<UpdateForm onSubmit={this.submit} cancelForm={closeSideBar} />
