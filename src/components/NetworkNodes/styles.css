@@ -1,0 +1,17 @@
+.parent {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch
+}
+
+.content {
+    background: #CAE2AA;
+    margin-left: 5%;
+    width: 50%;
+}
+
+.sideBar {
+    background: #A6C0C9;
+    margin-left: 5%;
+    width: 50%;
+}
