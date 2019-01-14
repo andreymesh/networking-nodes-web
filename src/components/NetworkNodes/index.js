@@ -1,11 +1,11 @@
 import React from "react"
 import { connect } from "react-redux"
 import { networkNodesActions } from "../../actions"
-import Tree from "rc-tree"
+import Tree, { TreeNode } from 'rc-tree'
 import 'rc-tree/assets/index.css'
 import './styles.css'
 import UpdateForm from '../UpdateForm'
-import AddWindow from "../AddWindow";
+import AddWindow from "../AddWindow"
 
 class NetworkNodes extends React.Component {
 	state = {
@@ -16,13 +16,14 @@ class NetworkNodes extends React.Component {
 	}
 
 	onSelect = (data) => {
-		this.props.getNetworkNodesInfo(data)
+		this.props.selectNode(data)
 		this.setState({ id: data })
 	}
 
 	deleteNode = () => {
 		const { id } = this.state
 		this.props.deleteNetworkNodes(id)
+		this.setState({ id: null })
 	}
 
 	submit = values => {
@@ -30,8 +31,30 @@ class NetworkNodes extends React.Component {
 		this.props.updateNetworkNode(data)
 	};
 
+	onCheck = (checkedKeys) => {
+		checkedKeys.forEach(element => {
+			this.props.getNetworkNodesInfo(element)
+		});
+	}
+
+	loop = (data) => {
+		return data.map((item) => {
+			if (item.childNetworkNodes) {
+				return <TreeNode title={item.title}
+					key={item.id}
+					disableCheckbox={item.childNetworkNodes.length > 0}>
+					{this.loop(item.childNetworkNodes)}
+				</TreeNode>;
+			}
+			return (
+				<TreeNode title={item.title} key={item.id} disableCheckbox={item.childNetworkNodes.length > 0} />
+			);
+		});
+	}
+
 	render() {
 		const { networkNodesList, visible, openModal, closeModal, modalVisible, closeSideBar } = this.props
+		const treeNodes = this.loop(networkNodesList)
 		const { id } = this.state
 		return (
 			<div className="parent">
@@ -40,8 +63,11 @@ class NetworkNodes extends React.Component {
 					<button onClick={this.deleteNode} disabled={!id}>Delete</button>
 					<Tree
 						onSelect={this.onSelect}
-						treeData={networkNodesList}
-					/>
+						checkable
+						onCheck={this.onCheck}
+					>
+						{treeNodes}
+					</Tree>
 				</div>
 				{visible &&
 					<div className="sideBar">
@@ -71,7 +97,9 @@ const mapDispatchToProps = (dispatch) => {
 		closeModal: () => dispatch(networkNodesActions.closeModal()),
 		deleteNetworkNodes: id => dispatch(networkNodesActions.deleteNetworkNodes(id)),
 		getNetworkNodesInfo: id => dispatch(networkNodesActions.getNetworkNodesInfo(id)),
-		updateNetworkNode: (data) => dispatch(networkNodesActions.updateNetworkNode(data))
+		updateNetworkNode: (data) => dispatch(networkNodesActions.updateNetworkNode(data)),
+		selectNode: (id) => dispatch(networkNodesActions.selectNode(id))
+
 	}
 }
 

@@ -21,11 +21,10 @@ const getNetworkNodesInfo = id =>
 				method: "GET",
 			})
 			const responseJSON = await response.json()
-			dispatch({ type: types.NETWORK_NODE_INFO__LOAD_SUCCESSFULL, data: responseJSON })
-			dispatch(openSideBar())
+			dispatch({ type: types.NETWORK_CHILD_LOAD_SUCCESSFULL, data: responseJSON })
 		}
 		catch (e) {
-			console.log(types.NETWORK_NODE_INFO__LOAD_FAILED, e)
+			console.log(types.NETWORK_CHILD_LOAD_FAILED, e)
 		}
 	}
 
@@ -36,11 +35,26 @@ const deleteNetworkNodes = id =>
 				method: 'DELETE'
 			})
 			const responseJSON = await response.json()
+			dispatch({ type: types.NETWORK_NODE_DELETE_SUCCESSFULL, data: responseJSON })
 			dispatch(closeSideBar())
-			responseJSON.success && dispatch(getListNetworkNodes())
 		}
 		catch (e) {
 			console.log(types.NETWORK_NODE_DELETE_FAILED, e)
+		}
+	}
+
+const selectNode = id =>
+	async dispatch => {
+		try {
+			const response = await fetch(`${API}/${id}`, {
+				method: "GET",
+			})
+			const responseJSON = await response.json()
+			dispatch({ type: types.NETWORK_NODE_INFO__LOAD_SUCCESSFULL, data: responseJSON })
+			dispatch(openSideBar())
+		}
+		catch (e) {
+			console.log(types.NETWORK_CHILD_LOAD_FAILED, e)
 		}
 	}
 
@@ -59,7 +73,9 @@ const updateNetworkNode = data =>
 				body
 			})
 			const responseJSON = await response.json()
-			responseJSON.success && dispatch(getListNetworkNodes())
+			data.id
+				? dispatch({ type: types.NETWORK_NODE_UPDATE_SUCCESSFULL, data: responseJSON })
+				: dispatch({ type: types.NETWORK_NODE_ADD_SUCCESSFULL, data: responseJSON })
 			data.id ? dispatch(closeSideBar()) : dispatch(closeModal())
 		}
 		catch (e) {
@@ -81,5 +97,6 @@ export const networkNodesActions = {
 	closeSideBar,
 	openModal,
 	closeModal,
-	updateNetworkNode
+	updateNetworkNode,
+	selectNode
 }

@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/action-types'
-import { updateList } from '../utils/const'
+import { updateList, addElement, deleteElement } from '../utils/const'
 const initialState = {
 	networkNodesList: [],
 	visible: false,
@@ -11,12 +11,32 @@ function rootReducer(state = initialState, action) {
 		case actionTypes.NETWORK_NODE_LOAD_SUCCESSFULL:
 			return {
 				...state,
-				networkNodesList: updateList(action.data)
+				networkNodesList: action.data
 			}
 		case actionTypes.NETWORK_NODE_INFO__LOAD_SUCCESSFULL:
 			return {
 				...state,
 				networkNodeInfo: action.data,
+			}
+		case actionTypes.NETWORK_CHILD_LOAD_SUCCESSFULL:
+			return {
+				...state,
+				networkNodesList: updateList(state.networkNodesList, action.data)
+			}
+		case actionTypes.NETWORK_NODE_ADD_SUCCESSFULL:
+			return {
+				...state,
+				networkNodesList: addElement(state.networkNodesList, action.data)
+			}
+		case actionTypes.NETWORK_NODE_UPDATE_SUCCESSFULL:
+			return {
+				...state,
+				networkNodesList: updateList(state.networkNodesList, action.data)
+			}
+		case actionTypes.NETWORK_NODE_DELETE_SUCCESSFULL:
+			return {
+				...state,
+				networkNodesList: deleteElement(state.networkNodesList, action.data)
 			}
 		case actionTypes.OPEN_SIDEBAR:
 			return {

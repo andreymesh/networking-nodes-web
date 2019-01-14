@@ -1,10 +1,48 @@
 export const API = 'http://localhost:3001'
 
-export const updateList = list => list.map(item => ({
-    key: item.id,
-    children: updateList(item.childNetworkNodes),
-    title: item.title
-}))
+export const updateList = (list, data) => (
+    list && list.map(item => {
+        if (item.childNetworkNodes) {
+            if (item.id === data.id) {
+                item = { ...data }
+            }
+            item.childNetworkNodes = updateList(item.childNetworkNodes, data)
+            return item
+        }
+    })
+)
+
+export const addElement = (list, data) => {
+    if (data.parentId) {
+        list = list.map(item => {
+            if (item.id === data.parentId) {
+                item.childNetworkNodes.push(data)
+            }
+            item.childNetworkNodes = addElement(item.childNetworkNodes, data)
+            return item
+        })
+    }
+    else {
+        list.push(data)
+    }
+    return list
+}
+
+export const deleteElement = (list, data) => {
+    if (data.parentId) {
+        list = list.map(item => {
+            if (item.id === data.parentId) {
+                item.childNetworkNodes = item.childNetworkNodes.filter(item => item.id !== data.id)
+            }
+            item.childNetworkNodes = deleteElement(item.childNetworkNodes, data)
+            return item
+        })
+    }
+    else {
+        list = list.filter(item => item.id !== data.id)
+    }
+    return list
+}
 
 const ipAddressValidation = value =>
     value &&
